@@ -87,9 +87,11 @@ function LoginScreen() {
     },
   });
 
-  const onSubmit = (data: { emailOrPhone: string; password: string }) => {
-    login(data.emailOrPhone, data.password);
-    router.replace("/(tabs)");
+  const onSubmit = async (data: { emailOrPhone: string; password: string }) => {
+    await login(data.emailOrPhone, data.password);
+    if (useAuthStore.getState().isAuthenticated) {
+      router.replace("/(tabs)");
+    }
   };
 
   const handleGoogleLogin = () => {
@@ -104,6 +106,14 @@ function LoginScreen() {
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       style={authStyles.keyboardView}
     >
+      <View style={{ position: "absolute", top: 32, left: 24, zIndex: 10 }}>
+        <TouchableOpacity
+          style={[authStyles.closeButton, { backgroundColor: COLORS.primary }]}
+          onPress={() => router.replace("/(tabs)")}
+        >
+          <Ionicons name="close" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
       <ScrollView
         contentContainerStyle={[
           authStyles.container,
@@ -184,6 +194,18 @@ function LoginScreen() {
             {errors.password.message}
           </Text>
         )}
+
+        {/* Forgot password link */}
+        <TouchableOpacity onPress={() => router.push("/forgotPassword")}>
+          <Text
+            style={[
+              authStyles.link,
+              { color: COLORS.primary, textAlign: "right", marginBottom: 12 },
+            ]}
+          >
+            Forgot password?
+          </Text>
+        </TouchableOpacity>
 
         {/** Login Button */}
         <TouchableOpacity

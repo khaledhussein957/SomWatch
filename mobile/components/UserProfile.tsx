@@ -32,7 +32,8 @@ const UserProfile = ({
       style={[profileStyles.container, { backgroundColor: COLORS.background }]}
     >
       <View style={profileStyles.header}>
-        <Image
+        {user.avatar ? (
+          <Image
           source={
             user?.avatar
               ? { uri: user.avatar }
@@ -40,6 +41,14 @@ const UserProfile = ({
           }
           style={profileStyles.avatar}
         />
+        ) : (
+          // display first character of name of user
+          <View style={profileStyles.avatarPlaceholder}>
+            <Text style={profileStyles.avatarText}>
+              {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+            </Text>
+          </View>
+        )}
         <Text style={[profileStyles.name, { color: COLORS.text }]}>
           {user?.name || "User"}
         </Text>

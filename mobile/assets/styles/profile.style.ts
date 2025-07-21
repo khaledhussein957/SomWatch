@@ -17,6 +17,18 @@ export const profileStyles = StyleSheet.create({
     marginBottom: 12,
     backgroundColor: '#eee',
   },
+  avatarPlaceholder: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    marginBottom: 12,
+    backgroundColor: '#eee',
+  },
+  avatarText: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#333',
+  },
   name: {
     fontSize: 22,
     fontWeight: '700',

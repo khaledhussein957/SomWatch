@@ -109,8 +109,9 @@ function RegisterScreen() {
       data.password,
       data.phone
     );
-    // Redirect to home
-    router.replace("/(tabs)");
+    if (useAuthStore.getState().isAuthenticated) {
+      router.replace("/(tabs)");
+    }
   };
 
   const handleGoogleLogin = () => {
@@ -125,12 +126,21 @@ function RegisterScreen() {
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       style={authStyles.keyboardView}
     >
+      <View style={{ position: "absolute", top: 32, left: 24, zIndex: 10 }}>
+        <TouchableOpacity
+          style={[authStyles.closeButton, { backgroundColor: COLORS.primary }]}
+          onPress={() => router.replace("/(tabs)")}
+        >
+          <Ionicons name="close" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
+
       <ScrollView
         contentContainerStyle={[
           authStyles.container,
           { backgroundColor: COLORS.background },
         ]}
-        >
+      >
         <AlertMessage error={error} clearError={() => setError(null)} />
         <Image
           source={require("../../assets/images/register.png")}

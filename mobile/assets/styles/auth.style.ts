@@ -76,4 +76,11 @@ export const authStyles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
   },
+  // rounded
+  closeButton: {
+    borderRadius: 999,
+    padding: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

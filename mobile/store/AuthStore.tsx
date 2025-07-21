@@ -4,9 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Use a fallback for environment detection in React Native
 const API_URL =
-  process.env.NODE_ENV === "development"
-    ? "http://192.168.48.148:4001/api"
-    : "/api";
+  process.env.NODE_ENV === "development" ? "http://127.0.0.1:4001/api" : "/api";
 
 axios.defaults.withCredentials = true;
 
@@ -174,6 +172,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
         error: null,
       });
     } catch (err: any) {
+      console.log("Google callback error:", err.response?.data || err.message);
       set({
         isLoading: false,
         error: err.response?.data?.message || err.message || "Login failed",

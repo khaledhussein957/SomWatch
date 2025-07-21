@@ -69,7 +69,7 @@ function ResetPasswordScreen() {
       ]}
     >
       <Image
-        source={require("../../assets/images/forgot_password.png")}
+        source={require("../../assets/images/reset_password.png")}
         style={authStyles.image}
         contentFit="contain"
       />

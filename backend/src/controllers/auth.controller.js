@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import { ENV } from "../config/env.js";
+import cloudinary from "../config/cloudinary.js";
 
 import User from "../models/user.model.js";
 
@@ -216,6 +216,17 @@ export const updateProfile = async (req, res) => {
         user.username = username;
         user.email = email;
         user.phone = phone;
+
+        if (req.file && req.file.path) {
+            if (user.avatar) {
+                const publicId = user.avatar.split("/").pop()?.split(".")[0];
+                if (publicId) {
+                    await cloudinary.uploader.destroy(publicId.toString());
+                }
+            }
+            const result = await cloudinary.uploader.upload(req.file.path, { folder: "profile-pictures" });
+            user.avatar = result.secure_url;
+        }
 
         await user.save();
 

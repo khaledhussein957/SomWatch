@@ -20,6 +20,7 @@
     "express": "^5.1.0",
     "google-auth-library": "^10.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.16.4"
+    "mongoose": "^8.16.4",
+    "multer": "^2.0.2"
   }
 }

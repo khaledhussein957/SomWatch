@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import { ENV } from "../config/env.js";
+import cloudinary from "../config/cloudinary.js";
 
 import User from "../models/user.model.js";
 
@@ -160,6 +160,87 @@ export const resetPassword = async (req, res) => {
 
     } catch (error) {
         console.log("Error in resetPassword:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export const updatePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ success: false, message: "All fields are required" });
+        }
+
+        // Find user by ID
+        const user = await User.findById(req.userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        // Check current password
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ success: false, message: "Current password is incorrect" });
+        }
+
+        // Hash new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Update user's password
+        user.password = hashedPassword;
+        await user.save();
+
+        res.status(200).json({ success: true, message: "Password updated successfully" });
+
+    } catch (error) {
+        console.log("Error in updatePassword:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export const updateProfile = async (req, res) => {
+    try {
+        const { name, username, email, phone } = req.body;
+        if (!name || !username || !email || !phone) {
+            return res.status(400).json({ success: false, message: "All fields are required" });
+        }
+
+        // Find user by ID
+        const user = await User.findById(req.userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        // Update user's profile
+        user.name = name;
+        user.username = username;
+        user.email = email;
+        user.phone = phone;
+
+        if (req.file && req.file.path) {
+            if (user.avatar) {
+                const publicId = user.avatar.split("/").pop()?.split(".")[0];
+                if (publicId) {
+                    await cloudinary.uploader.destroy(publicId.toString());
+                }
+            }
+            const result = await cloudinary.uploader.upload(req.file.path, { folder: "profile-pictures" });
+            user.avatar = result.secure_url;
+        }
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            user: {
+                ...user._doc,
+                password: undefined,
+            },
+            message: "Profile updated successfully"
+        });
+
+    } catch (error) {
+        console.log("Error in updateProfile:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };

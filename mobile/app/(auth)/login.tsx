@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Constants from "expo-constants";
 import {
   View,
   Text,
@@ -58,7 +59,7 @@ function LoginScreen() {
 
   const [request, response, promptAsync] = useAuthRequest(
     {
-      clientId: "<GOOGLE_CLIENT_ID>",
+      clientId: Constants.expoConfig?.extra?.googleClientId ?? "",
       responseType: ResponseType.Code,
       scopes: ["openid", "profile", "email"],
       redirectUri,

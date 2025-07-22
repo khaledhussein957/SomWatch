@@ -39,9 +39,14 @@ const userSchema = new mongoose.Schema({
         enum: ["user", "admin"],
         default: "user",
     },
-    fromGoogle: {
-        type: Boolean,
-        default: false,
+    clerkId: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    location: {
+        type: String,
+        default: "",
     },
     otp: {
         code: String,

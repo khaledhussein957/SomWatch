@@ -12,6 +12,7 @@
   "type": "module",
   "license": "ISC",
   "dependencies": {
+    "@clerk/express": "^1.7.10",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.7.0",
     "cors": "^2.8.5",

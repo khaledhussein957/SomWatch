@@ -7,7 +7,7 @@ const getGoogleAuthURL = () => {
         client_id: ENV.GOOGLE_CLIENT_ID,
         access_type: "offline",
         response_type: "code",
-        prompt: "consent",
+        prompt: ENV.NODE_ENV === "development" ? "consent" : undefined,
         scope: [
             "https://www.googleapis.com/auth/userinfo.email",
             "https://www.googleapis.com/auth/userinfo.profile",

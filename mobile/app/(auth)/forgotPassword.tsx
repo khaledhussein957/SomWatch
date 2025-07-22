@@ -96,7 +96,7 @@ function ForgotPasswordScreen() {
         onPress={handleSubmit(onSubmit)}
       >
         <Text style={[authStyles.buttonText, { color: COLORS.white }]}>
-          {isLoading ? "Sending..." : "Send Reset Link"}
+          {isLoading ? "Sending..." : "Send Reset Code"}
         </Text>
       </TouchableOpacity>
 

@@ -12,6 +12,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.khaled.somwatch",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -37,6 +38,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "4dae61e3-964a-4424-afcd-e7309ad8c29a"
+      },
+      "googleClientId": "748662920875-m6m59ko81nt2qjudog6g131gi2amg15r.apps.googleusercontent.com"
+
     }
   }
 }

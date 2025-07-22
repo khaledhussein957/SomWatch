@@ -37,6 +37,10 @@ export const syncUser = async (req, res) => {
     try {
         const { userId } = getAuth(req);
 
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
         // check if user already exists in mongodb
         const existingUser = await User.findOne({ clerkId: userId });
         if (existingUser) {
@@ -46,13 +50,25 @@ export const syncUser = async (req, res) => {
         // create new user from Clerk data
         const clerkUser = await clerkClient.users.getUser(userId);
 
+        // Validate Clerk user data
+        if (!clerkUser || !clerkUser.emailAddresses || clerkUser.emailAddresses.length === 0) {
+            return res.status(400).json({ error: "Invalid user data from Clerk" });
+        }
+
         const userData = {
             clerkId: userId,
             email: clerkUser.emailAddresses[0].emailAddress,
-            name: clerkUser.firstName + " " + clerkUser.lastName,
+            name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || 'Unknown User',
             username: clerkUser.emailAddresses[0].emailAddress.split("@")[0],
+            phone: clerkUser.phoneNumbers && clerkUser.phoneNumbers.length > 0 ? clerkUser.phoneNumbers[0].phoneNumber : "",
             avatar: clerkUser.imageUrl || "",
         };
+
+        // Validate username uniqueness
+        const existingUsername = await User.findOne({ username: userData.username });
+        if (existingUsername) {
+            userData.username = `${userData.username}_${Date.now()}`;
+        }
 
         const user = await User.create(userData);
 
@@ -60,14 +76,25 @@ export const syncUser = async (req, res) => {
 
     } catch (error) {
         console.error("Error syncing user:", error);
-        return res.status(500).json({ message: "Internal server error" });
 
+        // More specific error handling
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ message: "Invalid user data" });
+        }
+        if (error.code === 11000) {
+            return res.status(409).json({ message: "User already exists with this data" });
+        }
+
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
 
 export const getCurrentUser = async (req, res) => {
     try {
         const { userId } = getAuth(req);
+
+        if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
         const user = await User.findOne({ clerkId: userId });
 
         if (!user) return res.status(404).json({ error: "User not found" });
